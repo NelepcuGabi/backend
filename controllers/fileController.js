@@ -19,7 +19,7 @@ const initMongo = async () => {
 
     try {
         await client.connect();
-        db = client.db('authentication');
+        db = client.db('test');
         gfsBucket = new GridFSBucket(db, { bucketName: 'uploads' });
         console.log('Connected to MongoDB and GridFSBucket initialized');
     } catch (err) {
