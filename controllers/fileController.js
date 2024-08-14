@@ -1,6 +1,4 @@
 require('dotenv').config();
-
-
 const mongoose = require('mongoose');
 const { MongoClient, GridFSBucket } = require('mongodb');
 const multer = require('multer');
@@ -216,5 +214,31 @@ exports.updateFile = async (req, res) => {
     } catch (error) {
         console.error('Error updating file:', error);
         res.status(500).json({ message: 'Failed to update file', error: error.message });
+    }
+};
+exports.getUserFiles = async (req, res) => {
+    if (!req.user || !req.user.id) {
+        return res.status(400).json({ error: 'User not authenticated' });
+    }
+
+    try {
+    
+        const userId = req.user.id.toString();
+        // console.log('User ID:', userId); // Debugging log
+
+        const files = await gfsBucket.find({ 'metadata.userId': userId }).toArray();
+
+        if (files.length === 0) {
+            console.log('No files found for the current user'); // Debugging log
+            return res.status(404).json({ message: 'No files found for the current user' });
+        }
+
+        res.status(200).json(files);
+    } catch (err) {
+        console.error('Error retrieving user files:', err);
+        // Ensure only one response is sent
+        if (!res.headersSent) {
+            res.status(500).json({ error: 'An error occurred while retrieving user files' });
+        }
     }
 };

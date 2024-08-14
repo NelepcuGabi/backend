@@ -18,23 +18,30 @@ exports.signup = async(req, res, next) => {
         });
 
         //JWT Assignment
-        const token = createToken(newUser);
+        const { accessToken, refreshToken } = createToken(newUser);
 
-        res.cookie("accessToken", token, {
-            httpOnly: true, // Ensures the cookie is sent only over HTTP(S), not accessible to JavaScript
-            secure: process.env.NODE_ENV === 'production', // Ensures the cookie is sent only over HTTPS in production
-            maxAge: 60 * 60 * 24 * 30 * 1000 // Cookie expiry time in milliseconds (30 days)
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 15 * 60 * 1000 // 15 minutes
+        });
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         });
 
         res.status(201).json({
             status: 'success',
-            message: 'User registered successfully',
-            token,
+            message: 'Inregistrare reusita',
+            
             user: {
                 _id: newUser._id,
                 name: newUser.name,
                 email: newUser.email,
                 role: newUser.role,
+                rank: newUser.rank,
+                score: newUser.score,
             },
         });
         
@@ -58,23 +65,30 @@ exports.login = async(req, res, next) => {
             return next (new createError('Incorrect email or password!', 401));
         }
 
-        const token = createToken(user);
+        const { accessToken, refreshToken } = createToken(user);
 
-        res.cookie("accessToken", token, {
-            httpOnly: true, // Ensures the cookie is sent only over HTTP(S), not accessible to JavaScript
-            secure: process.env.NODE_ENV === 'production', // Ensures the cookie is sent only over HTTPS in production
-            maxAge: 60 * 60 * 24 * 30 * 1000 // (30 days)
+        res.cookie("accessToken", accessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 15 * 60 * 1000 // 15 minutes
+        });
+        res.cookie("refreshToken", refreshToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 30 * 24 * 60 * 60 * 1000 // 30 days
         });
         
         res.status(200).json({
             status: 'success',
-            token,
-            message: 'Logged in successfully.',
+            
+            message: 'Autentificare reusita.',
             user: {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                rank: user.rank,
+                score: user.score,
             },
         });
     } catch(error) {

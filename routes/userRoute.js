@@ -1,7 +1,7 @@
 const express = require('express');
 const { validateToken } = require('../controllers/jwtController.js'); 
 const User = require('../models/userModel.js'); 
-
+const fileController = require('../controllers/fileController.js'); 
 const router = express.Router();
 
 // Route to get current user details
@@ -19,5 +19,5 @@ router.get('/me', validateToken, async (req, res, next) => {
         next(error);
     }
 });
-
+router.get('/files', validateToken, fileController.getUserFiles);
 module.exports = router;

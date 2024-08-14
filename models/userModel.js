@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema({
         type:String,
         required: true,
     },
+    rank: {
+        type: String,
+        default: 'Beginner', 
+    },
+    score: {
+        type: Number,
+        default: 0,
+    },
 });
 
 const User = mongoose.model('User', userSchema);

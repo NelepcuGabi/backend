@@ -1,15 +1,16 @@
 const express = require('express');
-const commentController = require('../controllers/commentsController.js');
+const commentsController = require('../controllers/commentsController');
+const { validateToken } = require('../controllers/jwtController.js');
 
 const router = express.Router();
 
 router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
-router.get('/comments', commentController.getComments);
-router.post('/comments', commentController.addComment);
-router.get('/comments/:id', commentController.getCommentById);
-router.put('/comments/:id', commentController.updateComment);
-router.delete('/comments/:id', commentController.deleteComment);
+
+router.put('/:id', validateToken,commentsController.updateComment);
+router.delete('/:id', validateToken,commentsController.deleteComment);
+router.get('/:filename/comments', commentsController.getCommentsByFilename);
+router.post('/:filename/comments',validateToken, commentsController.addComment);
 
 module.exports = router;
